@@ -65,6 +65,19 @@ function generate_adaptation_set(VideoFormatArray) {
         });
     });
 
+    // Sort audio tracks to prefer English and Dutch first
+    const preferredLangs = ["en", "nl"];
+    mimeAudioObjs.sort((a, b) => {
+        const langA = a.audioTrackId?.substr(0, 2);
+        const langB = b.audioTrackId?.substr(0, 2);
+        const indexA = preferredLangs.indexOf(langA);
+        const indexB = preferredLangs.indexOf(langB);
+        if (indexA !== -1 && indexB === -1) return -1;
+        if (indexA === -1 && indexB !== -1) return 1;
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        return 0;
+    });
+
     mimeAudioObjs.forEach(mimeAudioObj => {
         const adapSet = {
             _id: mimeAudioObj.audioTrackId,
