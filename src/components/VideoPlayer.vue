@@ -621,9 +621,17 @@ export default {
 
                     let lang = "en";
                     if (!isSafari) {
-                        // Set the audio language
+                        // Set the audio language - prefer English or Dutch, fallback to user preference
+                        const availableLangs = player.getAudioLanguages();
                         const prefLang = this.getPreferenceString("hl", "en").substr(0, 2);
-                        if (player.getAudioLanguages().includes(prefLang)) lang = prefLang;
+                        const preferredOrder = ["en", "nl", prefLang];
+
+                        for (const preferred of preferredOrder) {
+                            if (availableLangs.includes(preferred)) {
+                                lang = preferred;
+                                break;
+                            }
+                        }
                         player.selectAudioLanguage(lang);
                     }
 
